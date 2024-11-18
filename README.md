@@ -1,6 +1,16 @@
 # Trellonotify
+forked from https://github.com/cloudsavant/trellonotify-gcp-based 
+
 A lightweight tool designed to seamlessly integrate with Trello, automatically generating Trello cards for upcoming tasks and events. Say goodbye to forgotten tasks and missed deadlines, and let Trellonotify keep your Trello boards up-to-date with timely reminders.
-This tool was originally developed for local/NAS based usage. Now it will be migrated to cloud. 
+
+The cloud based version will be migrated into a containerized version. 
+
+# Migration Plan
+1. Migrate back to NAS and use the built-in scheduler (leave file-based DB).
+2. Migrate file-based DB to a MySQL database.
+3. Containerize the tool using Docker and run it with the NAS built-in scheduler.
+4. Transition to a container-based scheduler and database to reduce dependency on NAS services.
+5. Develop a simple Python-based admin UI for the database.
 
 # Architecture
 - Google Cloud Storage: to store data files
