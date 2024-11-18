@@ -4,14 +4,6 @@ forked from https://github.com/cloudsavant/trellonotify-gcp-based
 A lightweight tool designed to seamlessly integrate with Trello, automatically generating Trello cards for upcoming tasks and events. Say goodbye to forgotten tasks and missed deadlines, and let Trellonotify keep your Trello boards up-to-date with timely reminders.
 
 The cloud based version will be migrated into a containerized version. 
-
-# Migration Plan
-1. Migrate back to NAS and use the built-in scheduler (leave file-based DB).
-2. Migrate file-based DB to a MySQL database.
-3. Containerize the tool using Docker and run it with the NAS built-in scheduler.
-4. Transition to a container-based scheduler and database to reduce dependency on NAS services.
-5. Develop a simple Python-based admin UI for the database.
-
 # Architecture
 - Google Cloud Storage: to store data files
 - Google Cloud Functions: to process data files
@@ -20,6 +12,36 @@ The cloud based version will be migrated into a containerized version.
 - Slack: to send notifications
 - Trello: to store tasks
 - Terraform: to manage infrastructure
+
+# Migration Plan
+1. Migrate back to NAS and use the built-in scheduler (leave file-based DB).
+2. Migrate file-based DB to a MySQL database.
+3. Containerize the tool using Docker and run it with the NAS built-in scheduler.
+4. Transition to a container-based scheduler and database to reduce dependency on NAS services.
+5. Develop a simple Python-based admin UI for the database.
+
+```mermaid
+graph TD
+    subgraph Future Architecture
+        G[NAS] -->|Stores Data| H[Python Script]
+        H -->|Reads Data| I[MySQL Database]
+        H -->|Creates Trello Cards| J[Trello API]
+        H -->|Sends Notifications| K[Slack API]
+        L[Docker] -->|Containerizes| H
+        M[Container-based Scheduler] -->|Schedules| H
+        N[Python-based Admin UI] -->|Manages| I
+    end
+
+    subgraph Current Architecture
+        A[Google Cloud Storage] -->|Stores CSV Data| B[Python Script]
+        B -->|Reads Data| C[Pandas DataFrame]
+        B -->|Creates Trello Cards| D[Trello API]
+        B -->|Sends Notifications| E[Slack API]
+        F[Google Secret Manager] -->|Stores Secrets| B
+    end
+```
+
+
 
 ## Infrastructure Diagram
 ```mermaid
@@ -38,15 +60,8 @@ graph TD
     G -->|Manages Infrastructure| F
 ```
 
-## Application Diagram
-```mermaid
-graph TD
-    A[Google Cloud Storage] -->|Stores CSV Data| B[Python Script]
-    B -->|Reads Data| C[Pandas DataFrame]
-    B -->|Creates Trello Cards| D[Trello API]
-    B -->|Sends Notifications| E[Slack API]
-    F[Google Secret Manager] -->|Stores Secrets| B
-```
+------------ old readme ------------
+
 
 # Requirements
 1. GCP account
