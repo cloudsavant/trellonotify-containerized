@@ -21,6 +21,33 @@ The cloud based version will be migrated into a containerized version.
 - Trello: to store tasks
 - Terraform: to manage infrastructure
 
+## Infrastructure Diagram
+```mermaid
+graph TD
+    A[Google Cloud Storage] -->|Stores| B[Google Cloud Functions]
+    B -->|Processes| C[Google Cloud Scheduler]
+    C -->|Triggers| B
+    D[Google Secret Manager] -->|Stores| B
+    E[Slack] -->|Sends Notifications| B
+    F[Trello] -->|Stores Tasks| B
+    G[Terraform] -->|Manages Infrastructure| A
+    G -->|Manages Infrastructure| B
+    G -->|Manages Infrastructure| C
+    G -->|Manages Infrastructure| D
+    G -->|Manages Infrastructure| E
+    G -->|Manages Infrastructure| F
+```
+
+## Application Diagram
+```mermaid
+graph TD
+    A[Google Cloud Storage] -->|Stores CSV Data| B[Python Script]
+    B -->|Reads Data| C[Pandas DataFrame]
+    B -->|Creates Trello Cards| D[Trello API]
+    B -->|Sends Notifications| E[Slack API]
+    F[Google Secret Manager] -->|Stores Secrets| B
+```
+
 # Requirements
 1. GCP account
 
