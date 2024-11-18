@@ -60,11 +60,26 @@ graph TD
     G -->|Manages Infrastructure| F
 ```
 
+
+# Requirements
+python 3.8
+
+# Setup
+## python env
+create a virtual environment
+
+windows:
+'''
+virtualenv.exe trellonotify-containerized-env 
+.\trellonotify-containerized-env\Scripts\activate
+
+pip freeze > app/requirements.txt
+'''
+
 ------------ old readme ------------
 
 
-# Requirements
-1. GCP account
+
 
 # Setup
 ## Terraform setup on windows
@@ -135,16 +150,7 @@ To send a message to Slack from a Google Cloud Function using Python, you can us
 ## deploy.sh modification
 - change source BUCKET_NAME: xxxxx
 
-## python env
-'''
-virtualenv.exe trellonotify
-.\trellonotify\Scripts\activate
-.\trellonotify\Scripts\Activate.ps1
 
-pip install google-cloud-storage
-pip install google-cloud-secret-manager
-pip freeze > app/requirements.txt
-'''
 
 # Application infrastructure setup
 ```
