@@ -1,29 +1,72 @@
-import logging
-from google.cloud import secretmanager
-from google.cloud import storage
+"""
+This module provides functionality to process recurring tasks via a csv based database.
+The script reads the task data from csv file, processes the tasks, creates new Trello 
+cards for tasks that are due soon and finally sends a notification to a Slack channel. 
 
-import pandas as pd
+Functions:
+- get_secret(secret_id, version_id="latest"): Retrieves a secret from Google Cloud Secret Manager.
+- read_gcs_csv_to_dataframe(bucket_name, file_name): Reads a CSV file from a GCS bucket into a pandas DataFrame.
+- write_dataframe_to_gcs(df, bucket_name, file_name): Writes a pandas DataFrame to a GCS bucket as a CSV file.
+- datedelta(delta): Categorizes a given number of days into predefined buckets.
+- create_trello_card(card_name, card_description, due_date, list_id): Creates a new Trello card in a specified list.
+- create_recurring_row(row): Generates a new row for a recurring task with updated dates.
+- generate_output_rows4group(df, group): Generates formatted output for a specific group of tasks based on days left.
+- send_message_to_slack(message): Sends a message to a specified Slack channel.
+- test_function(request): Main function to process tasks, create Trello cards, and send notifications to Slack.
+Constants:
+- CSV_DATA_FILE: The name of the CSV file used as a database.
+- TRELLO_LIST_ID: The ID of the Trello list where new cards will be created.
+- TRELLO_ENDPOINT: The base URL for Trello API requests.
+"""
+
+import logging
+import os
 import datetime
-import requests
 import json
 import io
 from io import BytesIO
+import pandas as pd
+import requests
+import yaml
+
 
 pd.options.mode.chained_assignment = None
 
 CSV_DATA_FILE = "db.csv"
 
 
-def get_secret(secret_id, version_id="latest"):
-    client = secretmanager.SecretManagerServiceClient()
-    # Build the resource name of the secret version.
-    name = f"projects/trellonotify-401705/secrets/{secret_id}/versions/{version_id}"
+def load_config():
+    """
+    Load the configuration file from the CONFIG_PATH environment variable.
+    """
 
-    # Access the secret version.
-    response = client.access_secret_version(name=name)
+    config_path = os.getenv("CONFIG_PATH")
+    if not config_path:
+        raise ValueError("CONFIG_PATH environment variable not set")
 
-    # Return the decoded payload.
-    return response.payload.data.decode("UTF-8")
+    with open(config_path, "r", encoding="utf-8") as file:
+        config_tmp = yaml.safe_load(file)
+
+    return config_tmp
+
+
+config = load_config()
+
+
+def get_secret(secret_id):
+    '''
+    Retrieves a secret from the configuration file
+
+    Args:
+    - secret_id (str): The ID of the secret to retrieve
+
+    Returns:
+    - str: The value of the secret
+    '''
+    if secret_id not in config["secrets"]:
+        raise ValueError(f"Secret {secret_id} not found in configuration")
+
+    return config["secrets"][secret_id]
 
 
 def read_gcs_csv_to_dataframe(bucket_name, file_name):

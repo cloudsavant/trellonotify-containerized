@@ -66,15 +66,29 @@ python 3.8
 
 # Setup
 ## python env
-create a virtual environment
-
-windows:
-'''
+create a virtual environment `trellonotify-containerized-env ` and activate it
+```bash
 virtualenv.exe trellonotify-containerized-env 
 .\trellonotify-containerized-env\Scripts\activate
+```
 
-pip freeze > app/requirements.txt
-'''
+install the required packages
+```bash
+pip install -r requirements.txt
+```
+
+## create `config.yaml`
+```yaml
+secrets:
+  TRELLO_KEY: "your_trello_key"
+  TRELLO_TOKEN: "your_trello_token"
+  TRELLO_LIST_ID: "your_trello_list_id"
+  SLACK_API_TOKEN: "your_slack_api_token"
+  SLACK_CHANNEL_ID: "your_slack_channel_id"
+
+db:
+  DB_FILE : "db.csv"
+```
 
 ------------ old readme ------------
 
